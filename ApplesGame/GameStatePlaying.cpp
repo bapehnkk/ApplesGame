@@ -6,33 +6,33 @@ namespace ApplesGame
 {
     void InitGameStatePlaying(GameStatePlayingData& data, Game& game)
     {
-        assert(data.playerTexture.loadFromFile(RESOURCES_PATH + "Pacman.png"));
-        assert(data.appleTexture.loadFromFile(RESOURCES_PATH + "Apple.png"));
+        assert(data.player_texture.loadFromFile(RESOURCES_PATH + "Pacman.png"));
+        assert(data.apple_texture.loadFromFile(RESOURCES_PATH + "Apple.png"));
         assert(data.font.loadFromFile(RESOURCES_PATH + "Fonts/Roboto-Regular.ttf"));
 
-        InitPlayer(data.player, data.playerTexture);
+        InitPlayer(data.player, data.player_texture);
 
         data.apples.clear();
-        ClearApplesGrid(data.applesGrid);
+        ClearApplesGrid(data.apples_grid);
         int numApples = MIN_APPLES + rand() % (MAX_APPLES + 1 - MIN_APPLES);
         data.apples.resize(numApples);
         for (Apple& apple : data.apples)
         {
-            InitApple(apple, data.appleTexture);
+            InitApple(apple, data.apple_texture);
             ResetAppleState(apple);
-            AddAppleToGrid(data.applesGrid, apple);
+            AddAppleToGrid(data.apples_grid, apple);
         }
 
-        data.numEatenApples = 0;
+        data.num_eaten_apples = 0;
 
-        data.scoreText.setFont(data.font);
-        data.scoreText.setCharacterSize(24);
-        data.scoreText.setFillColor(sf::Color::Yellow);
+        data.score_text.setFont(data.font);
+        data.score_text.setCharacterSize(24);
+        data.score_text.setFillColor(sf::Color::Yellow);
 
-        data.inputHintText.setFont(data.font);
-        data.inputHintText.setCharacterSize(24);
-        data.inputHintText.setFillColor(sf::Color::White);
-        data.inputHintText.setString("Use arrow keys to move, ESC to exit");
+        data.input_hint_text.setFont(data.font);
+        data.input_hint_text.setCharacterSize(24);
+        data.input_hint_text.setFillColor(sf::Color::White);
+        data.input_hint_text.setString("Use arrow keys to move, ESC to exit");
     }
 
     void ShutdownGameStatePlaying(GameStatePlayingData& data, Game& game)
@@ -46,12 +46,12 @@ namespace ApplesGame
         {
             if (event.key.code == sf::Keyboard::Escape)
             {
-                PushGameState(game, GameStateType::ExitDialog, false);
+                PushGameState(game, GameStateType::EXIT_DIALOG, false);
             }
         }
     }
 
-    void UpdateGameStatePlaying(GameStatePlayingData& data, Game& game, float timeDelta)
+    void UpdateGameStatePlaying(GameStatePlayingData& data, Game& game, const float time_delta)
     {
         // Обновление направления игрока в зависимости от нажатых клавиш
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
@@ -72,36 +72,36 @@ namespace ApplesGame
         }
 
         // Обновление позиции игрока
-        UpdatePlayer(data.player, timeDelta);
+        UpdatePlayer(data.player, time_delta);
 
         // Поиск столкновений игрока с яблоками
         std::vector<Apple*> collidingApples;
-        if (FindPlayerCollisionWithApples(data.player.position, data.applesGrid, collidingApples))
+        if (FindPlayerCollisionWithApples(data.player.position, data.apples_grid, collidingApples))
         {
             for (Apple* apple : collidingApples)
             {
-                if (!apple->isEaten)
+                if (!apple->is_eaten)
                 {
-                    if ((std::uint8_t)game.options & (std::uint8_t)GameOptions::InfiniteApples)
+                    if ((std::uint8_t)game.options & (std::uint8_t)GameOptions::INFINITE_APPLES)
                     {
                         // Перемещение яблока в новую случайную позицию
                         ResetAppleState(*apple);
-                        RemoveAppleFromGrid(data.applesGrid, *apple);
+                        RemoveAppleFromGrid(data.apples_grid, *apple);
                         // Удаляем яблоко из сетки перед обновлением его позиции
-                        AddAppleToGrid(data.applesGrid, *apple); // Добавляем обновленное яблоко обратно в сетку
+                        AddAppleToGrid(data.apples_grid, *apple); // Добавляем обновленное яблоко обратно в сетку
                     }
                     else
                     {
                         // Помечаем яблоко как съеденное
                         MarkAppleAsEaten(*apple);
-                        RemoveAppleFromGrid(data.applesGrid, *apple);
+                        RemoveAppleFromGrid(data.apples_grid, *apple);
                     }
 
                     // Увеличиваем счетчик съеденных яблок
-                    data.numEatenApples++;
+                    data.num_eaten_apples++;
 
                     // Увеличиваем скорость игрока, если это предусмотрено настройками
-                    if ((std::uint8_t)game.options & (std::uint8_t)GameOptions::WithAcceleration)
+                    if ((std::uint8_t)game.options & (std::uint8_t)GameOptions::WITH_ACCELERATION)
                     {
                         data.player.speed += ACCELERATION;
                     }
@@ -110,15 +110,15 @@ namespace ApplesGame
         }
 
         // Проверка условий завершения игры
-        bool isGameFinished = (data.numEatenApples == data.apples.size()) && !((std::uint8_t)game.options & (
-            std::uint8_t)GameOptions::InfiniteApples);
+        bool isGameFinished = (data.num_eaten_apples == data.apples.size()) && !((std::uint8_t)game.options & (
+            std::uint8_t)GameOptions::INFINITE_APPLES);
         if (isGameFinished || HasPlayerCollisionWithScreenBorder(data.player))
         {
             // Обновление рекорда игрока
-            game.recordsTable["Player"] = std::max(game.recordsTable["Player"], data.numEatenApples);
+            game.recordsTable["Player"] = std::max(game.recordsTable["Player"], data.num_eaten_apples);
 
             // Переход к состоянию конца игры
-            PushGameState(game, GameStateType::GameOver, false);
+            PushGameState(game, GameStateType::GAME_OVER, false);
         }
     }
 
@@ -128,15 +128,15 @@ namespace ApplesGame
         DrawPlayer(data.player, window);
         for (Apple& apple : data.apples)
         {
-            if (!apple.isEaten)
+            if (!apple.is_eaten)
             {
                 DrawApple(apple, window);
             }
         }
 
         // Отображение счета и подсказок
-        data.scoreText.setString("Score: " + std::to_string(data.numEatenApples));
-        window.draw(data.scoreText);
-        window.draw(data.inputHintText);
+        data.score_text.setString("Score: " + std::to_string(data.num_eaten_apples));
+        window.draw(data.score_text);
+        window.draw(data.input_hint_text);
     }
 }

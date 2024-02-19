@@ -8,11 +8,11 @@ namespace ApplesGame
 	{
 		assert(data.font.loadFromFile(RESOURCES_PATH + "Fonts/Roboto-Regular.ttf"));
 
-		data.hintText.setString("Are you sure you want to stop this game? Enter - Yes, Esc - No");
-		data.hintText.setFont(data.font);
-		data.hintText.setCharacterSize(24);
-		data.hintText.setFillColor(sf::Color::White);
-		data.hintText.setOrigin(GetItemOrigin(data.hintText, { 0.5f, 0.5f }));
+		data.hint_text.setString("Are you sure you want to stop this game? Enter - Yes, Esc - No");
+		data.hint_text.setFont(data.font);
+		data.hint_text.setCharacterSize(24);
+		data.hint_text.setFillColor(sf::Color::White);
+		data.hint_text.setOrigin(GetItemOrigin(data.hint_text, { 0.5f, 0.5f }));
 
 		data.background.setFillColor(sf::Color(0, 0, 0, 128)); // Semi-transparent black
 	}
@@ -32,25 +32,25 @@ namespace ApplesGame
 			}
 			else if (event.key.code == sf::Keyboard::Enter)
 			{
-				SwitchGameState(game, GameStateType::MainMenu);
+				SwitchGameState(game, GameStateType::MAIN_MENU);
 			}
 		}
 	}
 
-	void UpdateGameStateExitDialog(GameStateExitDialogData& data, Game& game, float timeDelta)
+	void UpdateGameStateExitDialog(GameStateExitDialogData& data, Game& game, float time_delta)
 	{
 
 	}
 
 	void DrawGameStateExitDialog(GameStateExitDialogData& data, Game& game, sf::RenderWindow& window)
 	{
-		sf::Vector2f windowSize = (sf::Vector2f)window.getSize();
+		const auto window_size = static_cast<sf::Vector2f>(window.getSize());
 		
-		data.background.setSize(windowSize);
+		data.background.setSize(window_size);
 		window.draw(data.background);
 
-		data.hintText.setPosition(windowSize / 2.f);
-		window.draw(data.hintText);
+		data.hint_text.setPosition(window_size / 2.f);
+		window.draw(data.hint_text);
 	}
 
 }

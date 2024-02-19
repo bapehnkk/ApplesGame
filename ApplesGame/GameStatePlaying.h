@@ -11,24 +11,24 @@ namespace ApplesGame
 	struct GameStatePlayingData
 	{
 		// Resources
-		sf::Texture playerTexture;
-		sf::Texture appleTexture;
+		sf::Texture player_texture;
+		sf::Texture apple_texture;
 		sf::Font font;
 
 		// Game data
 		Player player;
 		std::vector<Apple> apples;
-		ApplesGrid applesGrid;
-		int numEatenApples = 0;
+		ApplesGrid apples_grid;
+		int num_eaten_apples = 0;
 
 		// UI data
-		sf::Text scoreText;
-		sf::Text inputHintText;
+		sf::Text score_text;
+		sf::Text input_hint_text;
 	};
 
 	void InitGameStatePlaying(GameStatePlayingData& data, Game& game);
 	void ShutdownGameStatePlaying(GameStatePlayingData& data, Game& game);
 	void HandleGameStatePlayingWindowEvent(GameStatePlayingData& data, Game& game, const sf::Event& event);
-	void UpdateGameStatePlaying(GameStatePlayingData& data, Game& game, float timeDelta);
+	void UpdateGameStatePlaying(GameStatePlayingData& data, Game& game, const float time_delta);
 	void DrawGameStatePlaying(GameStatePlayingData& data, Game& game, sf::RenderWindow& window);
 }

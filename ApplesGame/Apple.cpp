@@ -16,7 +16,7 @@ namespace ApplesGame
 
 	void DrawApple(Apple& apple, sf::RenderWindow& window)
 	{
-		if (apple.isEaten)
+		if (apple.is_eaten)
 		{
 			return;
 		}
@@ -27,37 +27,37 @@ namespace ApplesGame
 
 	void MarkAppleAsEaten(Apple& apple)
 	{
-		apple.isEaten = true;
+		apple.is_eaten = true;
 	}
 
 	void ResetAppleState(Apple& apple)
 	{
 		// init apple state
-		apple.position.x = (float)(rand() % SCREEN_WIDTH);
-		apple.position.y = (float)(rand() % SCREEN_HEIGHT);
-		apple.isEaten = false;
+		apple.position.x = static_cast<float>(rand() % SCREEN_WIDTH);
+		apple.position.y = static_cast<float>(rand() % SCREEN_HEIGHT);
+		apple.is_eaten = false;
 	}
 
-	void ClearApplesGrid(ApplesGrid& applesGrid)
+	void ClearApplesGrid(ApplesGrid& apples_grid)
 	{
-		applesGrid.cells.clear();
+		apples_grid.cells.clear();
 	}
 
-	void AddAppleToGrid(ApplesGrid& applesGrid, Apple& apple)
+	void AddAppleToGrid(ApplesGrid& apples_grid, Apple& apple)
 	{
 		// Рассчитываем индексы ячеек сетки для яблока
-		int cellX = static_cast<int>(apple.position.x / (SCREEN_WIDTH / APPLES_GRID_CELLS_HORIZONTAL));
-		int cellY = static_cast<int>(apple.position.y / (SCREEN_HEIGHT / APPLES_GRID_CELLS_VERTICAL));
-		GridCoord cellCoord = {cellX, cellY};
+		int cell_x = static_cast<int>(apple.position.x / (static_cast<float>(SCREEN_WIDTH) / APPLES_GRID_CELLS_HORIZONTAL));
+		int cell_y = static_cast<int>(apple.position.y / (static_cast<float>(SCREEN_HEIGHT) / APPLES_GRID_CELLS_VERTICAL));
+		GridCoord cell_coord = {cell_x, cell_y};
 
 		// Добавляем яблоко в соответствующую ячейку
-		applesGrid.cells[cellCoord].insert(&apple);
+		apples_grid.cells[cell_coord].insert(&apple);
 	}
 
 
-	void RemoveAppleFromGrid(ApplesGrid& applesGrid, Apple& apple)
+	void RemoveAppleFromGrid(ApplesGrid& apples_grid, Apple& apple)
 	{
-		for (auto& cell : applesGrid.cells)
+		for (auto& cell : apples_grid.cells)
 		{
 			auto it = cell.second.find(&apple);
 			if (it != cell.second.end())
@@ -68,35 +68,35 @@ namespace ApplesGame
 		}
 	}
 
-	bool FindPlayerCollisionWithApples(const Vector2D& playerPosition, const ApplesGrid& grid, std::vector<Apple*>& result)
+	bool FindPlayerCollisionWithApples(const Vector2D& player_position, const ApplesGrid& grid, std::vector<Apple*>& result)
 	{
-		bool foundCollision = false;
+		bool found_collision = false;
 
 		// Рассчитываем индексы ячеек сетки для игрока
-		int cellX = static_cast<int>(playerPosition.x / (SCREEN_WIDTH / APPLES_GRID_CELLS_HORIZONTAL));
-		int cellY = static_cast<int>(playerPosition.y / (SCREEN_HEIGHT / APPLES_GRID_CELLS_VERTICAL));
-		GridCoord cellCoord = {cellX, cellY};
+		int cell_x = static_cast<int>(player_position.x / (static_cast<float>(SCREEN_WIDTH) / APPLES_GRID_CELLS_HORIZONTAL));
+		int cell_y = static_cast<int>(player_position.y / (static_cast<float>(SCREEN_HEIGHT) / APPLES_GRID_CELLS_VERTICAL));
+		const GridCoord cell_coord = {cell_x, cell_y};
 
 		// Проверяем наличие яблок в ячейке
-		auto it = grid.cells.find(cellCoord);
+		const auto it = grid.cells.find(cell_coord);
 		if (it != grid.cells.end())
 		{
 			for (Apple* apple : it->second)
 			{
-				if (!apple->isEaten)
+				if (!apple->is_eaten)
 				{
-					float dx = playerPosition.x - apple->position.x;
-					float dy = playerPosition.y - apple->position.y;
-					float distance = sqrt(dx * dx + dy * dy);
+					const float dx = player_position.x - apple->position.x;
+					const float dy = player_position.y - apple->position.y;
+					const float distance = sqrt(dx * dx + dy * dy);
 					if (distance < (PLAYER_SIZE + APPLE_SIZE) / 2)
 					{
 						result.push_back(apple);
-						foundCollision = true;
+						found_collision = true;
 					}
 				}
 			}
 		}
 
-		return foundCollision;
+		return found_collision;
 	}
 }

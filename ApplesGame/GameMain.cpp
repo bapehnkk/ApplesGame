@@ -11,7 +11,7 @@ using namespace ApplesGame;
 int main()
 {
 	// Init random number generator
-	unsigned int seed = (unsigned int)time(nullptr); // Get current time as seed. You can also use any other number to fix randomization
+	const unsigned int seed = static_cast<unsigned int>(time(nullptr)); // Get current time as seed. You can also use any other number to fix randomization
 	srand(seed);
 
 	// Init window
@@ -22,8 +22,8 @@ int main()
 	InitGame(*game);
 
 	// Init game clock
-	sf::Clock game_clock;
-	sf::Time lastTime = game_clock.getElapsedTime();
+	const sf::Clock game_clock;
+	sf::Time last_time = game_clock.getElapsedTime();
 
 	// Game loop
 	while (window.isOpen())
@@ -36,10 +36,10 @@ int main()
 		}
 
 		// Calculate time delta
-		sf::Time currentTime = game_clock.getElapsedTime();
-		float timeDelta = currentTime.asSeconds() - lastTime.asSeconds();
-		lastTime = currentTime;
-		if (UpdateGame(*game, timeDelta))
+		sf::Time current_time = game_clock.getElapsedTime();
+		const float time_delta = current_time.asSeconds() - last_time.asSeconds();
+		last_time = current_time;
+		if (UpdateGame(*game, time_delta))
 		{
 			// Draw everything here
 		// Clear the window first

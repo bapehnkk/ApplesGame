@@ -9,8 +9,8 @@ namespace ApplesGame
 	void InitPlayer(Player& player, const sf::Texture& texture)
 	{
 		// Init player state
-		player.position.x = (float)SCREEN_WIDTH / 2.f;
-		player.position.y = (float)SCREEN_HEIGHT / 2.f;
+		player.position.x = static_cast<float>(SCREEN_WIDTH) / 2.f;
+		player.position.y = static_cast<float>(SCREEN_HEIGHT) / 2.f;
 		player.speed = INITIAL_SPEED;
 		player.direction = PlayerDirection::Up;
 

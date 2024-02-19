@@ -3,11 +3,11 @@
 
 namespace ApplesGame
 {
-	void InitMenuItem(MenuItem& item)
+	void InitMenuItem(MenuItem& menu)
 	{
-		for (auto& child : item.children)
+		for (const auto& child : menu.children)
 		{
-			child->parent = &item;
+			child->parent = &menu;
 			InitMenuItem(*child);
 		}
 	}
@@ -15,40 +15,40 @@ namespace ApplesGame
 	void SelectMenuItem(Menu& menu, MenuItem* item)
 	{
 		// It is definitely error to select root item
-		assert(item != &menu.rootItem);
+		assert(item != &menu.root_item);
 
-		if (menu.selectedItem == item)
+		if (menu.selected_item == item)
 		{
 			return;
 		}
 
-		if (item && !item->isEnabled)
+		if (item && !item->is_enabled)
 		{
 			// Don't allow to select disabled item
 			return;
 		}
 
-		if (menu.selectedItem)
+		if (menu.selected_item)
 		{
-			menu.selectedItem->text.setFillColor(menu.selectedItem->deselectedColor);
+			menu.selected_item->text.setFillColor(menu.selected_item->deselected_color);
 		}
 
-		menu.selectedItem = item;
+		menu.selected_item = item;
 
-		if (menu.selectedItem)
+		if (menu.selected_item)
 		{
-			menu.selectedItem->text.setFillColor(menu.selectedItem->selectedColor);
+			menu.selected_item->text.setFillColor(menu.selected_item->selected_color);
 		}
 	}
 
 	bool SelectPreviousMenuItem(Menu& menu)
 	{
-		if (menu.selectedItem)
+		if (menu.selected_item)
 		{
-			MenuItem* parent = menu.selectedItem->parent;
+			MenuItem* parent = menu.selected_item->parent;
 			assert(parent); // There always should be parent
 
-			auto it = std::find(parent->children.begin(), parent->children.end(), menu.selectedItem);
+			auto it = std::find(parent->children.begin(), parent->children.end(), menu.selected_item);
 			if (it != parent->children.begin())
 			{
 				SelectMenuItem(menu, *(--it));
@@ -61,11 +61,11 @@ namespace ApplesGame
 
 	bool SelectNextMenuItem(Menu& menu)
 	{
-		if (menu.selectedItem)
+		if (menu.selected_item)
 		{
-			MenuItem* parent = menu.selectedItem->parent;
+			MenuItem* parent = menu.selected_item->parent;
 			assert(parent); // There always should be parent
-			auto it = std::find(parent->children.begin(), parent->children.end(), menu.selectedItem);
+			auto it = std::find(parent->children.begin(), parent->children.end(), menu.selected_item);
 			if (it != parent->children.end() - 1)
 			{
 				SelectMenuItem(menu, *(++it));
@@ -77,9 +77,9 @@ namespace ApplesGame
 
 	bool ExpandSelectedItem(Menu& menu)
 	{
-		if (menu.selectedItem && menu.selectedItem->children.size() > 0)
+		if (menu.selected_item && static_cast<int>(menu.selected_item->children.size()) > 0)
 		{
-			SelectMenuItem(menu, menu.selectedItem->children.front());
+			SelectMenuItem(menu, menu.selected_item->children.front());
 			return true;
 		}
 
@@ -88,9 +88,9 @@ namespace ApplesGame
 
 	bool CollapseSelectedItem(Menu& menu)
 	{
-		if (menu.selectedItem && menu.selectedItem->parent && menu.selectedItem->parent != &menu.rootItem)
+		if (menu.selected_item && menu.selected_item->parent && menu.selected_item->parent != &menu.root_item)
 		{
-			SelectMenuItem(menu, menu.selectedItem->parent);
+			SelectMenuItem(menu, menu.selected_item->parent);
 			return true;
 		}
 		return false;
@@ -98,24 +98,24 @@ namespace ApplesGame
 
 	MenuItem* GetCurrentMenuContext(Menu& menu)
 	{
-		return menu.selectedItem ? menu.selectedItem->parent : &menu.rootItem;
+		return menu.selected_item ? menu.selected_item->parent : &menu.root_item;
 	}
 
-	void DrawMenu(Menu& menu, sf::RenderWindow& window, sf::Vector2f position, sf::Vector2f origin)
+	void DrawMenu(Menu& menu, sf::RenderWindow& window, const sf::Vector2f position, const sf::Vector2f origin)
 	{
-		MenuItem* expandedItem = GetCurrentMenuContext(menu);
+		const MenuItem* expanded_item = GetCurrentMenuContext(menu);
 
 		std::vector<sf::Text*> texts;
-		texts.reserve(expandedItem->children.size());
-		for (auto& child : expandedItem->children)
+		texts.reserve(expanded_item->children.size());
+		for (auto& child : expanded_item->children)
 		{
-			if (child->isEnabled)
+			if (child->is_enabled)
 			{
 				texts.push_back(&child->text);
 			}
 		}
 
-		DrawItemsList(window, texts, expandedItem->childrenSpacing, expandedItem->childrenOrientation, expandedItem->childrenAlignment, position, origin);
+		DrawItemsList(window, texts, expanded_item->children_spacing, expanded_item->children_orientation, expanded_item->children_alignment, position, origin);
 	}
 
 }

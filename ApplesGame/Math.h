@@ -15,25 +15,26 @@ namespace ApplesGame
 	typedef Vector2D Position;
 
 	sf::Vector2f OurVectorToSf(const Vector2D& v);
-	sf::Vector2f GetSpriteScale(const sf::Sprite& sprite, const Vector2D& desiredSize);
-	sf::Vector2f GetItemOrigin(const sf::Sprite& sprite, const Vector2D& relativePosition);
-	sf::Vector2f GetItemOrigin(const sf::Text& text, const sf::Vector2f& relativePosition);
+	sf::Vector2f GetSpriteScale(const sf::Sprite& sprite, const Vector2D& desired_size);
+	sf::Vector2f GetItemOrigin(const sf::Sprite& sprite, const Vector2D& relative_position);
+	sf::Vector2f GetItemOrigin(const sf::Text& text, const sf::Vector2f& relative_position);
 
 	// Helper method for organizing text items
 	enum class Orientation
 	{
-		Horizontal,
-		Vertical
+		HORIZONTAL,
+		VERTICAL
 	};
 
 	enum class Alignment
 	{
-		Min, // Left or Top
-		Middle,
-		Max // Right or Bottom
+		MIN, // Left or Top
+		MIDDLE,
+		MAX // Right or Bottom
 	};
 
-	void DrawItemsList(sf::RenderWindow& window, const std::vector<sf::Text*>& items, float spacing, Orientation orientation, Alignment alignment, const sf::Vector2f& position, const sf::Vector2f& origin);
+	void DrawItemsList(sf::RenderWindow& window, const std::vector<sf::Text*>& items, const float spacing, const Orientation orientation, const
+	                   Alignment alignment, const sf::Vector2f& position, const sf::Vector2f& origin);
 
-	bool IsPointInRect(Vector2D point, Vector2D rectTL, Vector2D rectBR);
+	bool IsPointInRect(const Vector2D point, const Vector2D rect_tl, const Vector2D rect_br);
 }

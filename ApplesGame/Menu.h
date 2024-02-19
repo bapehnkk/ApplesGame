@@ -8,15 +8,15 @@ namespace ApplesGame
 	struct MenuItem
 	{
 		sf::Text text;
-		sf::Text hintText; // Visible when child item is selected
-		Orientation childrenOrientation = Orientation::Vertical;
-		Alignment childrenAlignment = Alignment::Min;
-		float childrenSpacing;
+		sf::Text hint_text; // Visible when child item is selected
+		Orientation children_orientation = Orientation::VERTICAL;
+		Alignment children_alignment = Alignment::MIN;
+		float children_spacing;
 
-		sf::Color selectedColor = sf::Color::Yellow;
-		sf::Color deselectedColor = sf::Color::White;
+		sf::Color selected_color = sf::Color::Yellow;
+		sf::Color deselected_color = sf::Color::White;
 
-		bool isEnabled = true;
+		bool is_enabled = true;
 		std::vector<MenuItem*> children;
 
 		MenuItem* parent = nullptr;
@@ -24,8 +24,8 @@ namespace ApplesGame
 
 	struct Menu
 	{
-		MenuItem rootItem;
-		MenuItem* selectedItem = nullptr;
+		MenuItem root_item;
+		MenuItem* selected_item = nullptr;
 	};
 
 	// Links children to parent
@@ -38,5 +38,5 @@ namespace ApplesGame
 
 	MenuItem* GetCurrentMenuContext(Menu& menu);
 
-	void DrawMenu(Menu& menu, sf::RenderWindow& window, sf::Vector2f position, sf::Vector2f origin);
+	void DrawMenu(Menu& menu, sf::RenderWindow& window, const sf::Vector2f position, const sf::Vector2f origin);
 }

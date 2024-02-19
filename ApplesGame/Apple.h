@@ -24,10 +24,10 @@ namespace ApplesGame
 	{
 		Position position;
 		sf::Sprite sprite;
-		bool isEaten = false;
+		bool is_eaten = false;
 
 
-		std::unordered_set<Apple*> gridCells;
+		std::unordered_set<Apple*> grid_cells;
 	};
 
 	void InitApple(Apple& apple, const sf::Texture& texture);
@@ -41,8 +41,8 @@ namespace ApplesGame
 		std::unordered_map<GridCoord, std::unordered_set<Apple*>, GridCoordHasher> cells;
 	};
 
-	void ClearApplesGrid(ApplesGrid& applesGrid);
-	void AddAppleToGrid(ApplesGrid& applesGrid, Apple& apple);
-	void RemoveAppleFromGrid(ApplesGrid& applesGrid, Apple& apple);
-	bool FindPlayerCollisionWithApples(const Vector2D& playerPosition, const ApplesGrid& grid, std::vector<Apple*>& result); // Result should be a pointer to an array of MAX_APPLES / 4 pointers to apples
+	void ClearApplesGrid(ApplesGrid& apples_grid);
+	void AddAppleToGrid(ApplesGrid& apples_grid, Apple& apple);
+	void RemoveAppleFromGrid(ApplesGrid& apples_grid, Apple& apple);
+	bool FindPlayerCollisionWithApples(const Vector2D& player_position, const ApplesGrid& grid, std::vector<Apple*>& result); // Result should be a pointer to an array of MAX_APPLES / 4 pointers to apples
 }

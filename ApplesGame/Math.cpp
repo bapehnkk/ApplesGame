@@ -16,94 +16,95 @@ namespace ApplesGame
 		return sf::Vector2f(v.x, v.y);
 	}
 
-	sf::Vector2f GetSpriteScale(const sf::Sprite& sprite, const Vector2D& desiredSize)
+	sf::Vector2f GetSpriteScale(const sf::Sprite& sprite, const Vector2D& desired_size)
 	{
-		const sf::Vector2u textureSize = sprite.getTexture()->getSize();
-		const sf::Vector2f spriteScale = { desiredSize.x / textureSize.x, desiredSize.y / textureSize.y };
-		return spriteScale;
+		const sf::Vector2u texture_size = sprite.getTexture()->getSize();
+		const sf::Vector2f sprite_scale = { desired_size.x / static_cast<float>(texture_size.x), desired_size.y / static_cast<float>(texture_size.y) };
+		return sprite_scale;
 	}
 
-	sf::Vector2f GetItemOrigin(const sf::Sprite& sprite, const Vector2D& relativePosition)
+	sf::Vector2f GetItemOrigin(const sf::Sprite& sprite, const Vector2D& relative_position)
 	{
-		const sf::Vector2u textureSize = sprite.getTexture()->getSize();
-		return { relativePosition.x * textureSize.x, relativePosition.y * textureSize.y };
+		const sf::Vector2u texture_size = sprite.getTexture()->getSize();
+		return { relative_position.x * static_cast<float>(texture_size.x), relative_position.y * static_cast<float>(texture_size.y) };
 	}
 
-	sf::Vector2f GetItemOrigin(const sf::Text& text, const sf::Vector2f& relativePosition)
+	sf::Vector2f GetItemOrigin(const sf::Text& text, const sf::Vector2f& relative_position)
 	{
-		sf::FloatRect textSize = text.getLocalBounds();
+		const sf::FloatRect text_size = text.getLocalBounds();
 		return {
-			(textSize.left + textSize.width) * relativePosition.x,
-			(textSize.top + textSize.height) * relativePosition.y,
+			(text_size.left + text_size.width) * relative_position.x,
+			(text_size.top + text_size.height) * relative_position.y,
 		};
 	}
 
-	void DrawItemsList(sf::RenderWindow& window, const std::vector<sf::Text*>& items, float spacing, Orientation orientation, Alignment alignment, const sf::Vector2f& position, const sf::Vector2f& origin)
+	void DrawItemsList(sf::RenderWindow& window, const std::vector<sf::Text*>& items, const float spacing, const Orientation orientation, const
+	                   Alignment alignment, const sf::Vector2f& position, const sf::Vector2f& origin)
 	{
-		sf::FloatRect totalRect;
+		sf::FloatRect total_rect;
 		// Calculate total height/width of all texts
 		for (auto it = items.begin(); it != items.end(); ++it)
 		{
-			sf::FloatRect itemRect = (*it)->getGlobalBounds();
+			sf::FloatRect item_rect = (*it)->getGlobalBounds();
 
-			if (orientation == Orientation::Horizontal)
+			if (orientation == Orientation::HORIZONTAL)
 			{
-				totalRect.width += itemRect.width + (it != items.end() - 1 ? spacing : 0.f);
-				totalRect.height = std::max(totalRect.height, itemRect.height);
+				total_rect.width += item_rect.width + (it != items.end() - 1 ? spacing : 0.f);
+				total_rect.height = std::max(total_rect.height, item_rect.height);
 			}
 			else
 			{
-				totalRect.width = std::max(totalRect.width, itemRect.width);
-				totalRect.height += itemRect.height + (it != items.end() - 1 ? spacing : 0.f);
+				total_rect.width = std::max(total_rect.width, item_rect.width);
+				total_rect.height += item_rect.height + (it != items.end() - 1 ? spacing : 0.f);
 			}
 		}
 
-		totalRect.left = position.x - origin.x * totalRect.width;
-		totalRect.top = position.y - origin.y * totalRect.height;
-		sf::Vector2f currentPos = { totalRect.left, totalRect.top };
+		total_rect.left = position.x - origin.x * total_rect.width;
+		total_rect.top = position.y - origin.y * total_rect.height;
+		sf::Vector2f current_pos = { total_rect.left, total_rect.top };
 		
 		for (auto it = items.begin(); it != items.end(); ++it)
 		{
-			sf::FloatRect itemRect = (*it)->getGlobalBounds();
-			sf::Vector2f itemOrigin;
+			const sf::FloatRect item_rect = (*it)->getGlobalBounds();
+			sf::Vector2f item_origin;
 
-			if (orientation == Orientation::Horizontal)
+			if (orientation == Orientation::HORIZONTAL)
 			{
-				itemOrigin.y = alignment == Alignment::Min ? 0.f : alignment == Alignment::Middle ? 0.5f : 1.f;
-				itemOrigin.x = 0.f;
-				currentPos.y = totalRect.top + itemOrigin.y * totalRect.height;
+				item_origin.y = alignment == Alignment::MIN ? 0.f : alignment == Alignment::MIDDLE ? 0.5f : 1.f;
+				item_origin.x = 0.f;
+				current_pos.y = total_rect.top + item_origin.y * total_rect.height;
 			}
 			else
 			{
-				itemOrigin.y = 0.f;
-				itemOrigin.x = alignment == Alignment::Min ? 0.f : alignment == Alignment::Middle ? 0.5f : 1.f;
-				currentPos.x = totalRect.left + itemOrigin.x * totalRect.width;
+				item_origin.y = 0.f;
+				item_origin.x = alignment == Alignment::MIN ? 0.f : alignment == Alignment::MIDDLE ? 0.5f : 1.f;
+				current_pos.x = total_rect.left + item_origin.x * total_rect.width;
 			}
 			
-			(*it)->setOrigin(GetItemOrigin(**it, itemOrigin));
-			(*it)->setPosition(currentPos);
+			(*it)->setOrigin(GetItemOrigin(**it, item_origin));
+			(*it)->setPosition(current_pos);
 			window.draw(**it);
 
-			if (orientation == Orientation::Horizontal)
+			if (orientation == Orientation::HORIZONTAL)
 			{
-				currentPos.x += itemRect.width + spacing;
+				current_pos.x += item_rect.width + spacing;
 			}
 			else
 			{
-				currentPos.y += itemRect.height + spacing;
+				current_pos.y += item_rect.height + spacing;
 			}
 
 			
 		}
 	}
 
-	bool IsPointInRect(Vector2D point, Vector2D rectTL, Vector2D rectBR)
+	bool IsPointInRect(const Vector2D point, const Vector2D rect_tl, const Vector2D rect_br)
 	{
-		if (point.x < rectTL.x || point.x > rectBR.x)
+		if (point.x < rect_tl.x || point.x > rect_br.x)
 		{
 			return false;
 		}
-		if (point.y < rectTL.y || point.y > rectBR.y)
+		if (point.y < rect_tl.y || point.y > rect_br.y)
 		{
 			return false;
 		}

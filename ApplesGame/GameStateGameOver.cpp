@@ -8,26 +8,26 @@ namespace ApplesGame
 	{
 		assert(data.font.loadFromFile(RESOURCES_PATH + "Fonts/Roboto-Regular.ttf"));
 
-		data.timeSinceGameOver = 0.f;
+		data.time_since_game_over = 0.f;
 
-		data.gameOverText.setFont(data.font);
-		data.gameOverText.setCharacterSize(48);
-		data.gameOverText.setStyle(sf::Text::Bold);
-		data.gameOverText.setFillColor(sf::Color::Red);
-		data.gameOverText.setString("GAME OVER");
-		data.gameOverText.setOrigin(GetItemOrigin(data.gameOverText, { 0.5f, 0.5f }));
+		data.game_over_text.setFont(data.font);
+		data.game_over_text.setCharacterSize(48);
+		data.game_over_text.setStyle(sf::Text::Bold);
+		data.game_over_text.setFillColor(sf::Color::Red);
+		data.game_over_text.setString("GAME OVER");
+		data.game_over_text.setOrigin(GetItemOrigin(data.game_over_text, { 0.5f, 0.5f }));
 		
-		data.hintText.setFont(data.font);
-		data.hintText.setCharacterSize(24);
-		data.hintText.setFillColor(sf::Color::White);
-		data.hintText.setString("Press Space to restart");
-		data.hintText.setOrigin(GetItemOrigin(data.hintText, { 0.5f, 1.f }));
+		data.hint_text.setFont(data.font);
+		data.hint_text.setCharacterSize(24);
+		data.hint_text.setFillColor(sf::Color::White);
+		data.hint_text.setString("Press Space to restart");
+		data.hint_text.setOrigin(GetItemOrigin(data.hint_text, { 0.5f, 1.f }));
 
-		data.recordsTableText.setFont(data.font);
-		data.recordsTableText.setCharacterSize(24);
-		data.recordsTableText.setFillColor(sf::Color::Green);
-		data.recordsTableText.setString("Records:\nPlayer: 999\nPlayer: 999\nPlayer: 999\nPlayer: 999\nPlayer: 999");
-		data.recordsTableText.setOrigin(GetItemOrigin(data.recordsTableText, { 0.5f, 0.f }));
+		data.records_table_text.setFont(data.font);
+		data.records_table_text.setCharacterSize(24);
+		data.records_table_text.setFillColor(sf::Color::Green);
+		data.records_table_text.setString("Records:\nPlayer: 999\nPlayer: 999\nPlayer: 999\nPlayer: 999\nPlayer: 999");
+		data.records_table_text.setOrigin(GetItemOrigin(data.records_table_text, { 0.5f, 0.f }));
 	}
 
 	void ShutdownGameStateGameOver(GameStateGameOverData& data, Game& game)
@@ -41,41 +41,41 @@ namespace ApplesGame
 		{
 			if (event.key.code == sf::Keyboard::Space)
 			{
-				SwitchGameState(game, GameStateType::Playing);
+				SwitchGameState(game, GameStateType::PLAYING);
 			}
 			else if (event.key.code == sf::Keyboard::Escape)
 			{
-				SwitchGameState(game, GameStateType::MainMenu);
+				SwitchGameState(game, GameStateType::MAIN_MENU);
 			}
 		}
 	}
 
-	void UpdateGameStateGameOver(GameStateGameOverData& data, Game& game, float timeDelta)
+	void UpdateGameStateGameOver(GameStateGameOverData& data, const Game& game, const float time_delta)
 	{
-		data.timeSinceGameOver += timeDelta;
+		data.time_since_game_over += time_delta;
 
-		sf::Color gameOverTextColor = (int)data.timeSinceGameOver % 2 ? sf::Color::Red : sf::Color::Yellow;
-		data.gameOverText.setFillColor(gameOverTextColor);
+		const sf::Color game_over_text_color = static_cast<int>(data.time_since_game_over) % 2 ? sf::Color::Red : sf::Color::Yellow;
+		data.game_over_text.setFillColor(game_over_text_color);
 
-		data.recordsTableText.setString("Records:");
+		data.records_table_text.setString("Records:");
 		for (const auto& item : game.recordsTable)
 		{
-			data.recordsTableText.setString(data.recordsTableText.getString() + "\n" + item.first + ": " + std::to_string(item.second));
+			data.records_table_text.setString(data.records_table_text.getString() + "\n" + item.first + ": " + std::to_string(item.second));
 		}
-		data.recordsTableText.setOrigin(GetItemOrigin(data.recordsTableText, { 0.5f, 0.f }));
+		data.records_table_text.setOrigin(GetItemOrigin(data.records_table_text, { 0.5f, 0.f }));
 	}
 
 	void DrawGameStateGameOver(GameStateGameOverData& data, Game& game, sf::RenderWindow& window)
 	{
-		sf::Vector2f viewSize = window.getView().getSize();
+		const sf::Vector2f view_size = window.getView().getSize();
 
-		data.gameOverText.setPosition(viewSize.x / 2.f, viewSize.y / 2.f);
-		window.draw(data.gameOverText);
+		data.game_over_text.setPosition(view_size.x / 2.f, view_size.y / 2.f);
+		window.draw(data.game_over_text);
 
-		data.recordsTableText.setPosition(viewSize.x / 2.f, 30.f);
-		window.draw(data.recordsTableText);
+		data.records_table_text.setPosition(view_size.x / 2.f, 30.f);
+		window.draw(data.records_table_text);
 
-		data.hintText.setPosition(viewSize.x / 2.f, viewSize.y - 10.f);
-		window.draw(data.hintText);
+		data.hint_text.setPosition(view_size.x / 2.f, view_size.y - 10.f);
+		window.draw(data.hint_text);
 	}
 }
