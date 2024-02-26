@@ -37,7 +37,7 @@ namespace ApplesGame
 		}
 	}
 
-	void UpdateGameStateExitDialog(GameStateExitDialogData& data, Game& game, float time_delta)
+	void  UpdateGameStateExitDialog(GameStateExitDialogData& data, Game& game, float time_delta)
 	{
 
 	}

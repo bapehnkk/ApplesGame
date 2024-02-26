@@ -16,12 +16,17 @@ namespace ApplesGame
 		data.menu.root_item.children_alignment = Alignment::MIDDLE;
 		data.menu.root_item.children_spacing = 10.f;
 		data.menu.root_item.children.push_back(&data.start_game_item);
+		data.menu.root_item.children.push_back(&data.records_table);
 		data.menu.root_item.children.push_back(&data.options_item);
 		data.menu.root_item.children.push_back(&data.exit_game_item);
 
 		data.start_game_item.text.setString("Start Game");
 		data.start_game_item.text.setFont(data.font);
 		data.start_game_item.text.setCharacterSize(24);
+
+		data.records_table.text.setString("Records Table");
+		data.records_table.text.setFont(data.font);
+		data.records_table.text.setCharacterSize(24);
 		
 		data.options_item.text.setString("Options");
 		data.options_item.text.setFont(data.font);
@@ -92,6 +97,10 @@ namespace ApplesGame
 				if (data.menu.selected_item == &data.start_game_item)
 				{
 					SwitchGameState(game, GameStateType::PLAYING);
+				}
+				else if (data.menu.selected_item == &data.records_table)
+				{
+					SwitchGameState(game, GameStateType::RECORDS_TABLE);
 				}
 				else if (data.menu.selected_item == &data.options_item)
 				{

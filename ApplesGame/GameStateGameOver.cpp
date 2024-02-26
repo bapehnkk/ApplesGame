@@ -23,11 +23,6 @@ namespace ApplesGame
 		data.hint_text.setString("Press Space to restart");
 		data.hint_text.setOrigin(GetItemOrigin(data.hint_text, { 0.5f, 1.f }));
 
-		data.records_table_text.setFont(data.font);
-		data.records_table_text.setCharacterSize(24);
-		data.records_table_text.setFillColor(sf::Color::Green);
-		data.records_table_text.setString("Records:\nPlayer: 999\nPlayer: 999\nPlayer: 999\nPlayer: 999\nPlayer: 999");
-		data.records_table_text.setOrigin(GetItemOrigin(data.records_table_text, { 0.5f, 0.f }));
 	}
 
 	void ShutdownGameStateGameOver(GameStateGameOverData& data, Game& game)
@@ -57,12 +52,6 @@ namespace ApplesGame
 		const sf::Color game_over_text_color = static_cast<int>(data.time_since_game_over) % 2 ? sf::Color::Red : sf::Color::Yellow;
 		data.game_over_text.setFillColor(game_over_text_color);
 
-		data.records_table_text.setString("Records:");
-		for (const auto& item : game.recordsTable)
-		{
-			data.records_table_text.setString(data.records_table_text.getString() + "\n" + item.first + ": " + std::to_string(item.second));
-		}
-		data.records_table_text.setOrigin(GetItemOrigin(data.records_table_text, { 0.5f, 0.f }));
 	}
 
 	void DrawGameStateGameOver(GameStateGameOverData& data, Game& game, sf::RenderWindow& window)
@@ -71,9 +60,6 @@ namespace ApplesGame
 
 		data.game_over_text.setPosition(view_size.x / 2.f, view_size.y / 2.f);
 		window.draw(data.game_over_text);
-
-		data.records_table_text.setPosition(view_size.x / 2.f, 30.f);
-		window.draw(data.records_table_text);
 
 		data.hint_text.setPosition(view_size.x / 2.f, view_size.y - 10.f);
 		window.draw(data.hint_text);

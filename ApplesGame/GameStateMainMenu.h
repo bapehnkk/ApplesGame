@@ -11,6 +11,7 @@ namespace ApplesGame
 		sf::Font font;
 
 		MenuItem start_game_item;
+		MenuItem records_table;
 		MenuItem options_item;
 		MenuItem options_infinite_apples_item;
 		MenuItem options_with_acceleration_item;

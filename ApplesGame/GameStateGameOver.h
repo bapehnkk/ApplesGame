@@ -15,7 +15,6 @@ namespace ApplesGame
 		// UI data
 		sf::Text game_over_text;
 		sf::Text hint_text;
-		sf::Text records_table_text;
 	};
 
 	// Returns pointer to the allocated data

@@ -25,6 +25,7 @@ namespace ApplesGame
 		NONE = 0,
 		MAIN_MENU,
 		PLAYING,
+		RECORDS_TABLE,
 		GAME_OVER,
 		EXIT_DIALOG,
 	};
@@ -52,7 +53,7 @@ namespace ApplesGame
 		bool pending_game_state_is_exclusively_visible = false;
 
 		GameOptions options = GameOptions::DEFAULT;
-		std::unordered_map<std::string, int> recordsTable;
+		std::unordered_map<std::string, int> records_table;
 	};
 
 	
@@ -63,13 +64,13 @@ namespace ApplesGame
 	void ShutdownGame(Game& game);
 
 	// Add new game state on top of the stack
-	void PushGameState(Game& game, GameStateType state_type, bool is_exclusively_visible);
+	void PushGameState(Game& game, const GameStateType state_type, const bool is_exclusively_visible);
 
 	// Remove current game state from the stack
 	void PopGameState(Game& game);
 
 	// Remove all game states from the stack and add new one
-	void SwitchGameState(Game& game, GameStateType new_state);
+	void SwitchGameState(Game& game, const GameStateType new_state);
 
 	void InitGameState(Game& game, GameState& state);
 	void ShutdownGameState(Game& game, GameState& state);

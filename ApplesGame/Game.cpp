@@ -1,17 +1,20 @@
 #include "Game.h"
 #include <assert.h>
 #include <algorithm>
+#include <iostream>
+
 #include "GameStatePlaying.h"
 #include "GameStateGameOver.h"
 #include "GameStateExitDialog.h"
 #include "GameStateMainMenu.h"
+#include "GameStateRecordsTable.h"
 
 namespace ApplesGame
 {
     void InitGame(Game& game)
     {
         // Generate fake records table
-        game.recordsTable =
+        game.records_table =
         {
             {"John", MAX_APPLES},
             {"Jane", MAX_APPLES / 2},
@@ -91,17 +94,17 @@ namespace ApplesGame
     {
         if (static_cast<float>(game.game_state_stack.size()) > 0)
         {
-            std::vector<GameState*> visibleGameStates;
+            std::vector<GameState*> visible_game_states;
             for (auto it = game.game_state_stack.rbegin(); it != game.game_state_stack.rend(); ++it)
             {
-                visibleGameStates.push_back(&(*it));
+                visible_game_states.push_back(&(*it));
                 if (it->is_exclusively_visible)
                 {
                     break;
                 }
             }
 
-            for (auto it = visibleGameStates.rbegin(); it != visibleGameStates.rend(); ++it)
+            for (auto it = visible_game_states.rbegin(); it != visible_game_states.rend(); ++it)
             {
                 DrawGameState(game, **it, window);
             }
@@ -122,7 +125,7 @@ namespace ApplesGame
         game.pending_game_state_is_exclusively_visible = false;
     }
 
-    void PushGameState(Game& game, GameStateType state_type, bool is_exclusively_visible)
+    void PushGameState(Game& game, const GameStateType state_type, const bool is_exclusively_visible)
     {
         game.pending_game_state_type = state_type;
         game.pending_game_state_is_exclusively_visible = is_exclusively_visible;
@@ -136,7 +139,7 @@ namespace ApplesGame
         game.game_state_change_type = GameStateChangeType::POP;
     }
 
-    void SwitchGameState(Game& game, GameStateType new_state)
+    void SwitchGameState(Game& game, const GameStateType new_state)
     {
         game.pending_game_state_type = new_state;
         game.pending_game_state_is_exclusively_visible = false;
@@ -165,14 +168,16 @@ namespace ApplesGame
                 InitGameStateGameOver(*static_cast<GameStateGameOverData*>(state.data), game);
                 break;
             }
+        case GameStateType::RECORDS_TABLE:
+            {
+                state.data = new GameStateRecordsTableData();
+                InitGameStateRecordsTable(*static_cast<GameStateRecordsTableData*>(state.data), game);
+                break;
+            }
         case GameStateType::EXIT_DIALOG:
             {
                 state.data = new GameStateExitDialogData();
                 InitGameStateExitDialog(*static_cast<GameStateExitDialogData*>(state.data), game);
-                break;
-            }
-        case GameStateType::NONE:
-            {
                 break;
             }
         default:
@@ -199,6 +204,12 @@ namespace ApplesGame
                 delete static_cast<GameStatePlayingData*>(state.data);
                 break;
             }
+        case GameStateType::RECORDS_TABLE:
+            {
+                ShutdownGameStateRecordsTable(*static_cast<GameStateRecordsTableData*>(state.data), game);
+                delete static_cast<GameStateRecordsTableData*>(state.data);
+                break;
+            }
         case GameStateType::GAME_OVER:
             {
                 ShutdownGameStateGameOver(*static_cast<GameStateGameOverData*>(state.data), game);
@@ -209,10 +220,6 @@ namespace ApplesGame
             {
                 ShutdownGameStateExitDialog(*static_cast<GameStateExitDialogData*>(state.data), game);
                 delete static_cast<GameStateExitDialogData*>(state.data);
-                break;
-            }
-        case GameStateChangeType::NONE:
-            {
                 break;
             }
         default:
@@ -239,6 +246,12 @@ namespace ApplesGame
                 HandleGameStatePlayingWindowEvent(*static_cast<GameStatePlayingData*>(state.data), game, event);
                 break;
             }
+        case GameStateType::RECORDS_TABLE:
+            {
+                HandleGameStateRecordsTableWindowEvent(*static_cast<GameStateRecordsTableData*>(state.data), game, event);
+
+                break;
+            }
         case GameStateType::GAME_OVER:
             {
                 HandleGameStateGameOverWindowEvent(*static_cast<GameStateGameOverData*>(state.data), game, event);
@@ -247,10 +260,6 @@ namespace ApplesGame
         case GameStateType::EXIT_DIALOG:
             {
                 HandleGameStateExitDialogWindowEvent(*static_cast<GameStateExitDialogData*>(state.data), game, event);
-                break;
-            }
-        case GameStateType::NONE:
-            {
                 break;
             }
         default:
@@ -280,13 +289,14 @@ namespace ApplesGame
                 UpdateGameStateGameOver(*static_cast<GameStateGameOverData*>(state.data), game, time_delta);
                 break;
             }
+        case GameStateType::RECORDS_TABLE:
+            {
+                UpdateGameStateRecordsTable(*static_cast<GameStateRecordsTableData*>(state.data), game, time_delta);
+                break;
+            }
         case GameStateType::EXIT_DIALOG:
             {
                 UpdateGameStateExitDialog(*static_cast<GameStateExitDialogData*>(state.data), game, time_delta);
-                break;
-            }
-        case GameStateChangeType::NONE:
-            {
                 break;
             }
         default:
@@ -316,13 +326,14 @@ namespace ApplesGame
                 DrawGameStateGameOver(*static_cast<GameStateGameOverData*>(state.data), game, window);
                 break;
             }
+        case GameStateType::RECORDS_TABLE:
+            {
+                DrawGameStateRecordsTable(*static_cast<GameStateRecordsTableData*>(state.data), game, window);
+                break;
+            }
         case GameStateType::EXIT_DIALOG:
             {
                 DrawGameStateExitDialog(*static_cast<GameStateExitDialogData*>(state.data), game, window);
-                break;
-            }
-        case GameStateChangeType::NONE:
-            {
                 break;
             }
         default:

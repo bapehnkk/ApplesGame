@@ -14,8 +14,8 @@ namespace ApplesGame
 
         data.apples.clear();
         ClearApplesGrid(data.apples_grid);
-        int numApples = MIN_APPLES + rand() % (MAX_APPLES + 1 - MIN_APPLES);
-        data.apples.resize(numApples);
+        const int num_apples = MIN_APPLES + rand() % (MAX_APPLES + 1 - MIN_APPLES);
+        data.apples.resize(num_apples);
         for (Apple& apple : data.apples)
         {
             InitApple(apple, data.apple_texture);
@@ -75,14 +75,14 @@ namespace ApplesGame
         UpdatePlayer(data.player, time_delta);
 
         // Поиск столкновений игрока с яблоками
-        std::vector<Apple*> collidingApples;
-        if (FindPlayerCollisionWithApples(data.player.position, data.apples_grid, collidingApples))
+        std::vector<Apple*> colliding_apples;
+        if (FindPlayerCollisionWithApples(data.player.position, data.apples_grid, colliding_apples))
         {
-            for (Apple* apple : collidingApples)
+            for (Apple* apple : colliding_apples)
             {
                 if (!apple->is_eaten)
                 {
-                    if ((std::uint8_t)game.options & (std::uint8_t)GameOptions::INFINITE_APPLES)
+                    if (static_cast<std::uint8_t>(game.options) & static_cast<std::uint8_t>(GameOptions::INFINITE_APPLES))
                     {
                         // Перемещение яблока в новую случайную позицию
                         ResetAppleState(*apple);
@@ -101,7 +101,7 @@ namespace ApplesGame
                     data.num_eaten_apples++;
 
                     // Увеличиваем скорость игрока, если это предусмотрено настройками
-                    if ((std::uint8_t)game.options & (std::uint8_t)GameOptions::WITH_ACCELERATION)
+                    if (static_cast<std::uint8_t>(game.options) & static_cast<std::uint8_t>(GameOptions::WITH_ACCELERATION))
                     {
                         data.player.speed += ACCELERATION;
                     }
@@ -110,12 +110,11 @@ namespace ApplesGame
         }
 
         // Проверка условий завершения игры
-        bool isGameFinished = (data.num_eaten_apples == data.apples.size()) && !((std::uint8_t)game.options & (
-            std::uint8_t)GameOptions::INFINITE_APPLES);
-        if (isGameFinished || HasPlayerCollisionWithScreenBorder(data.player))
+        const bool is_game_finished = (data.num_eaten_apples == data.apples.size()) && !(static_cast<std::uint8_t>(game.options) & static_cast<std::uint8_t>(GameOptions::INFINITE_APPLES));
+        if (is_game_finished || HasPlayerCollisionWithScreenBorder(data.player))
         {
             // Обновление рекорда игрока
-            game.recordsTable["Player"] = std::max(game.recordsTable["Player"], data.num_eaten_apples);
+            game.records_table["Player"] = std::max(game.records_table["Player"], data.num_eaten_apples);
 
             // Переход к состоянию конца игры
             PushGameState(game, GameStateType::GAME_OVER, false);
